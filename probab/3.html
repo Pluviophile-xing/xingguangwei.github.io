@@ -1,0 +1,293 @@
+
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="chapter" content="bi">
+
+
+    <!-- For Facebook Sharing -->
+    <meta property="og:url" content="http://students.brown.edu/seeing-theory/bayesian-inference/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="贝叶斯统计" />
+    <meta property="og:description" content="贝叶斯学派的思想是用数据来更新特定假设的概率。" />
+    <meta property="og:image" content="http://students.brown.edu/seeing-theory/img/share/5.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+
+    <title>贝叶斯统计</title>
+    <!-- CSS Imports -->
+    <!--Fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Assistant:300,400,600,700" rel="stylesheet">
+    <!--Font Awesome-->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!--Favicon-->
+    <link rel="shortcut icon" type="image/png" href="img/favicon.png" />
+    <!-- General Chapter -->
+    <link rel="stylesheet" type="text/css" href="css/chapter-style.css">
+    <!-- Specific Chapter -->
+    <link rel="stylesheet" type="text/css" href="bayesian-inference.css">
+    <!-- JavaScript Imports -->
+    <!-- D3 -->
+    <script src="js/d3.min.js"></script>
+    <!-- Jquery -->
+    <script src="../js/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <!-- jstat -->
+    <script src="js/jstat.min.js"></script>
+    <!-- MathJax -->
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- Tool Tip -->
+    <script src="js/d3.tip.v0.6.3.js"></script>
+    <!-- General Chapter -->
+    <script src="js/chapter.js"></script>
+    <!-- Visualizations -->
+    <script src="bayesian-inference.js"></script>
+    <!-- Google Analytics -->
+    <script>
+    (function(i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function() {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+    ga('create', 'UA-85617614-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+</head>
+
+<body id='5'>
+<header data-bs-theme="dark" style="width: 20px">
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">可视</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index-1.html">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">链接</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="prob.html">统计学</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../algorim/algorim.html">数据结构</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../algorim/algorim.html">算法导论</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://visualgo.net/zh">更多</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" aria-disabled="true"></a>
+                    </li>
+                </ul>
+                <a href="../signin.html">
+                    <button  class="btn btn-outline-success" type="submit" style="width:150px" >123@qq.com</button>
+                </a>
+            </div>
+        </div>
+    </nav>
+</header>
+    <div class="col-left">
+        <div class="col-left-wrapper">
+            <div id="section0">
+                <div class="chapter-intro">
+                    <h1>贝叶斯统计</h1>
+                    <p>贝叶斯学派的思想是用数据来更新特定假设的概率。
+                    </p>
+                </div>
+                <div class="scroll-down"> <img src="img/button/bottom-arrow.svg"></div>
+            </div>
+            <div id="section1">
+                <div class="unit">
+                    <h3>贝叶斯公式</h3>
+                    <p>假设你最近去看了医生，并决定检查一下自己有没有得一种罕见的疾病。如果你很不幸地收到了阳性的结果，你可能最想知道的是“已知这个检查结果，我真的得了这种病的概率是多少？”（毕竟医疗检查并不是100%准确的。）有了贝叶斯公式，我们就可以准确地计算出上述事件的概率：</p>
+
+                    <span id="mathjax-5-1">$$P(\text{患病}|阳性) = \dfrac{P(阳性|\text{患病})P(\text{患病})}{P(阳性)}$$</span>
+                    <p>从上述公式我们可以看出，已知检查结果阳性患病的<em>后验</em>还依赖于概率患病的<em>先验</em>概率\( P(\text{患病}) \)。我们可以把这个患病的先验概率理解为人群中患有这个疾病的概率。拖拽下方的柱状图来调整这个先验概率。</p>
+                    <div class="interactive-wrapper">
+                        <div id="bayes_prior"></div>
+                    </div>
+                    <p>另一方面，后验概率还依赖于检查的准确程度：一个健康的人收到阴性结果的概率是多少？一个患者收到阳性结果的概率是多少？你可以在下方确定这两者的概率。</p>
+                    <div id="bayes_likelihood"></div>
+                    <p> 最后，我们还需要知道这个检查给出阳性结果的总概率。你可以点击下方的按钮来生成一些样本，模拟检查过程。</p>
+                    <div class="interactive-wrapper">
+                        <div class="button-1" id="test_one">检查一位患者</div>
+                        <div class="button-1" id="test_rest">检查所有患者</div>
+                        <table id="marginal">
+                            <tr>
+                                <th>阴性</th>
+                                <th>阳性</th>
+                            </tr>
+                            <tr>
+                                <td id="neg"></td>
+                                <td id="pos"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <p>以上就是计算后验概率所需要的所有信息。下方的表格给出了利用贝叶斯公式算出的其他后验概率。</p>
+                    <div class="interactive-wrapper">
+                        <table id="posterior">
+                            <tr>
+                                <th></th>
+                                <th>阴性</th>
+                                <th>阳性</th>
+                            </tr>
+                            <tr>
+                                <th>健康</th>
+                                <td id="h_n"></td>
+                                <td id="h_p"></td>
+                            </tr>
+                            <tr>
+                                <th>患病</th>
+                                <td id="d_n"></td>
+                                <td id="d_p"></td>
+                            </tr>
+                        </table>
+                        <div class="button-1" id="sort">分类</div>
+                        <!-- <div class="button-1" id="unsort">Unsort</div> -->
+                        <div class="button-1" id="reset">重置</div>
+                    </div>
+                </div>
+            </div>
+            <div id="section2">
+                <div class="unit">
+                    <h3>似然函数</h3>
+                    <p>在统计学中， <em>似然函数</em> 的定义是：</p><span id="mathjax-5-2">
+                    $$L(\theta | x) = P(x | \theta)$$</span>
+                    <p>似然函数的概念在频率学派和贝叶斯学派中都有重要的作用。</p>
+                    <div class="interactive-wrapper">
+                        <select id="dist" class="st-dropdown">
+                            <option disabled selected> -- 选择概率分布 -- </option>
+                            <option value="uniform">均匀分布 Uniform (0,&theta;)</option>
+                            <option value="normal">正态分布 Normal (&theta;, 1)</option>
+                            <option value="exponential">指数分布 Exponential (&theta;)</option>
+                            <option value="bernoulli">伯努利分布 Bernoulli (&theta;)</option>
+                            <option value="binomialDiscrete">二项分布 Binomial (3, &theta;)</option>
+                            <option value="poisson">泊松分布 Poisson (&theta;)</option>
+                            <option value="">清除</option>
+                        </select>
+                    </div>
+                    <p> 选择样本大小\(n\)然后生成样本。</p>
+                    <div class="interactive-wrapper">
+                        <div class="st-slider">
+                            <p> \(n\) = <span id="sample_size-value">1</span></p>
+                            <input type="range" id="sample_size" min="1" max="20" step="1" value="1" class="blueSlider">
+                        </div>
+                        <div id="sample" class="button-1">生成样本</div>
+                    </div>
+                    <p>拖动<span class="purple-color">紫色</span>滑块（改变\(\theta\)的值）并观察似然函数。</p>
+                </div>
+            </div>
+            <div id="section3">
+                <div class="unit">
+                    <h3>从先验概率到后验概率</h3>
+                    <p> 贝叶斯统计的核心思想是利用观察到的数据来更新先验信息。考虑一枚不均匀的硬币，抛出正面的概率为\(p\)。下面的紫色滑块可以调整\(p\)的大小（假设在现实中我们并不知道\(p\)）。</p>
+                    <div class="interactive-wrapper">
+                        <div class="st-slider">
+                            <p> \(p\) = <span id="p-value">0.5</span></p>
+                            <input type="range" id="p" min="0" max="1" step="0.01" value="0.5" class="greenSlider">
+                        </div>
+                    </div>
+                    <p>粉色的滑块可以调整\(p\)的先验分布。这里我们假定\(p\)的先验分布是Beta(\(\alpha,\beta\))，在图中粉色曲线代表了先验概率的密度分布函数。</p>
+                    <div class="st-slider">
+                        <p>\(\alpha\) = <span id="alpha-value">1</span></p>
+                        <input type="range" id="alpha" min="0.01" max="5" step="0.01" value="1" class="blueSlider">
+                    </div>
+                    <div class="st-slider">
+                        <p> \(\beta\) = <span id="beta-value">1</span></p>
+                        <input type="range" id="beta" min="0.01" max="5" step="0.01" value="1" class="blueSlider">
+                    </div>
+                    <p>当我们重复抛硬币时，我们不断更新关于\(p\)的后验分布。这个后验分布就是我们对\(p\)的最好估计，同时这也是我们相对我们下一次抛硬币结果的先验信息。</p>
+                    <div class="interactive-wrapper">
+                        <div id="coinWrapper">
+                            <div id="coin"></div>
+                            <div id="coinButtons">
+                                <div class="button-1" id="flip_1">抛硬币</div>
+                                <div class="button-1" id="flip_10">抛10次硬币</div>
+                            </div>
+                            </br></br>
+                        </div>
+                    </div>
+
+
+
+                    <div id="coinWrapper2">
+                        <div class="coin-img">
+                            <img src="img/tail.png" alt="tail">
+                        </div>
+                        <div class="coin-text">
+                            = <span id="tail"></span>
+                        </div>
+                
+                        <div class="coin-img">
+                            <img src="img/head.png" alt="head">
+                        </div>
+                        <div class="coin-text">
+                            = <span id="head"></span>
+                        </div>
+                    </div>
+
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-right">
+        <br></br>
+        <br></br>
+        <div class="nav-section" id="section-0">
+            <div class="nav-unit-wrapper" id='one'>
+                <img src="img/tiles/5-1.png">
+                <span class="nav-unit-title"> 贝叶斯公式 </span>
+            </div>
+            <div class="nav-unit-wrapper" id='two'>
+                <img src="img/tiles/5-2.png">
+                <span class="nav-unit-title"> 似然函数 </span>
+            </div>
+            <div class="nav-unit-wrapper" id='three'>
+                <img src="img/tiles/5-3.png">
+                <span class="nav-unit-title"> 从先验概率到后验概率 </span>
+            </div>
+        </div>
+        <div class="visualization-section" id="section-1">
+            <div class="visualization-wrapper" id="bayes"></div>
+        </div>
+        <div class="visualization-section" id="section-2">
+            <div class="visualization-wrapper" id="likelihood"></div>
+        </div>
+        <div class="visualization-section" id="section-3">
+            <div class="visualization-wrapper" id="prior"></div>
+        </div>
+    </div>
+    <!-- Share CSS and JavaScript -->
+    <link rel="stylesheet" href="css/share.min.css">
+    <script src="js/jquery.share.min.js"></script>
+    <script>
+        $('#share').share();
+
+        $(".languageSetting").change(function() {
+          var option = $(this).find('option:selected');
+          window.location.href = option.data("url");
+        });
+    </script>
+</body>
+
+</html>
